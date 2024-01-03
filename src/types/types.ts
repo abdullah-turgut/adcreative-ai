@@ -1,8 +1,3 @@
-type Origin = {
-  name: string;
-  url: string;
-};
-
 type Location = {
   name: string;
   url: string;
@@ -11,15 +6,19 @@ type Location = {
 export type Character = {
   id: number;
   name: string;
-  status: string;
+  status: 'Dead' | 'Alive' | 'unknown';
   species: string;
   type: string;
-  gender: string;
+  gender: 'unknown' | 'Female' | 'Male' | 'Genderless';
   image: string;
   episode: string[];
   url: string;
   created: string;
 
-  origin: Origin;
+  origin: Location;
   location: Location;
+};
+
+export type ApiResponse = {
+  data: Character[];
 };

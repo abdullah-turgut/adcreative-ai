@@ -1,5 +1,16 @@
+import { useEffect } from 'react';
+import MultiSelect from './MultiSelect';
+import { getData } from '../../services/api';
+
 const Main = () => {
-  return <main className="pt-24 pb-16 bg-black h-screen">Main</main>;
+  useEffect(() => {
+    getData('Rick');
+  }, []);
+  return (
+    <main className="pt-24 lg:pt-32 pb-16  h-screen flex justify-center items-start px-5">
+      <MultiSelect />
+    </main>
+  );
 };
 
 export default Main;
