@@ -1,7 +1,20 @@
+import Main from './components/Main/Main';
+import Navbar from './components/Navbar/Navbar';
 import './index.css';
 
 function App() {
-  return <div className="text-3xl">Hello World</div>;
+  return (
+    <>
+      <header>
+        <Navbar />
+      </header>
+      <main>
+        <Main />
+      </main>
+
+      {/* <Footer /> */}
+    </>
+  );
 }
 
 export default App;
