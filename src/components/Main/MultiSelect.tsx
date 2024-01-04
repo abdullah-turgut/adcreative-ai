@@ -1,29 +1,70 @@
 import { ChevronDown } from 'lucide-react';
 import PopupContent from './PopupContent';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const MultiSelect = () => {
+import { Character } from '../../types/types';
+import SelectedOption from './SelectedOption';
+
+const MultiSelect = ({ data }: { data: Character[] }) => {
   const [query, setQuery] = useState<string>('');
-  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [filteredData, setFilteredData] = useState<Character[] | []>([]);
+  const [selectedList, setSelectedList] = useState<Character[] | []>([]);
+
+  useEffect(() => {
+    if (!query) {
+      setFilteredData(data);
+    }
+  }, [query, data]);
 
   function handlePopup() {
     setIsOpen(!isOpen);
   }
+
+  function handleQuery(e: React.ChangeEvent<HTMLInputElement>) {
+    setIsLoading(true);
+
+    const q = e.target.value.toLowerCase();
+
+    setIsOpen(true);
+    setQuery(q);
+    const x = data.filter((char: Character) =>
+      char.name.toLowerCase().includes(q)
+    );
+    setFilteredData(x);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }
+
+  function handleSelect(char: Character) {
+    if (selectedList.some((item: Character) => item.id === char.id)) {
+      setSelectedList(
+        selectedList.filter((item: Character) => item.id !== char.id)
+      );
+    } else {
+      setSelectedList([...selectedList, char]);
+    }
+  }
+  console.log(selectedList);
   return (
     <div
       tabIndex={0}
       className="w-full max-w-xl border rounded-2xl min-h-10 relative flex"
     >
       <div className="flex gap-x-3 min-w-0 p-2 max-w-[200px] lg:max-w-[500px]">
-        <div className="w-20 h-full bg-blue-300 rounded-md">1</div>
-        <div className="w-20 h-full bg-blue-300 rounded-md">1</div>
-        <div className="w-20 h-full bg-blue-300 rounded-md">1</div>
-        <div className="w-20 h-full bg-blue-300 rounded-md">1</div>
+        {selectedList.map((item: Character) => (
+          <SelectedOption key={item.id} item={item} />
+        ))}
       </div>
 
       <input
         type="text"
-        className="border flex-1 px-2 outline-none min-w-0 rounded-xl"
+        className="flex-1 px-2 outline-none min-w-32 rounded-xl"
+        onChange={handleQuery}
+        placeholder="Select..."
       />
 
       <span
@@ -35,7 +76,13 @@ const MultiSelect = () => {
         />
       </span>
 
-      <PopupContent isOpen={isOpen} />
+      <PopupContent
+        isOpen={isOpen}
+        data={filteredData}
+        isLoading={isLoading}
+        handleSelect={handleSelect}
+        selectedList={selectedList}
+      />
     </div>
   );
 };

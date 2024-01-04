@@ -1,12 +1,25 @@
-import axios from 'axios';
+import { Character } from '../types/types';
 
-export async function getData(query: string): Promise<void> {
+export async function fetchCharacters(query?: string): Promise<Character[]> {
   try {
-    const data = await axios.get(
-      `https://rickandmortyapi.com/api/character/?name=${query.toLowerCase()}&page=2`
-    );
-    console.log(data.data.results);
+    let allCharacters: Character[] = [];
+    let page = 1;
+    let data;
+
+    do {
+      const response = await fetch(
+        `https://rickandmortyapi.com/api/character/?${
+          query ? `name=${query.toLowerCase()}&` : ''
+        }page=${page}`
+      );
+      data = await response.json();
+      allCharacters = [...allCharacters, ...data.results];
+      page++;
+    } while (page <= data.info.pages);
+
+    return allCharacters;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 }
