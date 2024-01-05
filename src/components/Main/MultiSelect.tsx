@@ -89,6 +89,7 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
         selectedList={selectedList}
         highlightedIndex={highlightedIndex}
         setHighlightedIndex={setHighlightedIndex}
+        query={query}
       />
     </div>
   );

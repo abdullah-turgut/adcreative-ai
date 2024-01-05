@@ -10,6 +10,7 @@ type PopupContentProps = {
   selectedList: Character[] | [];
   highlightedIndex: number;
   setHighlightedIndex: Dispatch<SetStateAction<number>>;
+  query: string;
 };
 
 const PopupContent = ({
@@ -20,6 +21,7 @@ const PopupContent = ({
   selectedList,
   highlightedIndex,
   setHighlightedIndex,
+  query,
 }: PopupContentProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +33,20 @@ const PopupContent = ({
       }
     }
   }, [isOpen, highlightedIndex]);
+
+  const makeTextBold = (text: string, query: string) => {
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index !== -1) {
+      return (
+        <>
+          {text.substring(0, index)}
+          <strong>{text.substring(index, index + query.length)}</strong>
+          {text.substring(index + query.length)}
+        </>
+      );
+    }
+    return text;
+  };
 
   return (
     <div
@@ -68,7 +84,7 @@ const PopupContent = ({
             />
 
             <div className="flex flex-col">
-              <span>{char.name}</span>
+              <span>{makeTextBold(char.name, query)}</span>
               <span className="text-sm">{char.episode.length} Episodes</span>
             </div>
           </div>
