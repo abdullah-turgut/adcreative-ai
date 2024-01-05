@@ -1,6 +1,5 @@
 import { CheckSquare, Loader2, Square } from 'lucide-react';
 import { Character } from '../../types/types';
-// import { useState } from 'react';
 
 type PopupContentProps = {
   isOpen: boolean;
@@ -8,6 +7,7 @@ type PopupContentProps = {
   isLoading: boolean;
   handleSelect: (char: Character) => void;
   selectedList: Character[] | [];
+  highlightedIndex: number;
 };
 
 const PopupContent = ({
@@ -16,7 +16,9 @@ const PopupContent = ({
   isLoading,
   handleSelect,
   selectedList,
+  highlightedIndex,
 }: PopupContentProps) => {
+  console.log(highlightedIndex);
   return (
     <div
       className={`absolute bottom-0 left-0 border rounded-2xl translate-y-[103%] w-full max-h-96 min-h-fit flex flex-col overflow-y-auto  ${
@@ -29,11 +31,14 @@ const PopupContent = ({
           <p className="text-xs">Loading...</p>
         </div>
       ) : (
-        data.map((char) => (
+        data.map((char, index: number) => (
           <div
             key={char.id}
-            className="px-5 py-2 border-b flex items-center space-x-3 hover:bg-neutral-50 cursor-pointer transition"
+            className={`px-5 outline-none py-2 border-b flex items-center space-x-3 hover:bg-neutral-50 cursor-pointer transition ${
+              highlightedIndex === index ? 'bg-neutral-50' : ''
+            }`}
             onClick={() => handleSelect(char)}
+            tabIndex={highlightedIndex === index ? 0 : -1}
           >
             {selectedList.some((item) => item.id === char.id) ? (
               <CheckSquare />

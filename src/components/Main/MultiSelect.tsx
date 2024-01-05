@@ -18,8 +18,18 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<Character[] | []>([]);
   const [selectedList, setSelectedList] = useState<Character[] | []>([]);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
-  useKeyboardHandler(setIsOpen, selectedList, selectRef);
+  useKeyboardHandler(
+    isOpen,
+    setIsOpen,
+    selectedList,
+    selectRef,
+    setHighlightedIndex,
+    filteredData,
+    setSelectedList,
+    highlightedIndex
+  );
 
   useEffect(() => {
     if (!query) {
@@ -35,7 +45,12 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
     >
       <div className="flex gap-x-3 min-w-0 p-2 max-w-[200px] lg:max-w-[500px]">
         {selectedList.map((item: Character) => (
-          <SelectedOption key={item.id} item={item} />
+          <SelectedOption
+            key={item.id}
+            item={item}
+            selectedList={selectedList}
+            setSelectedList={setSelectedList}
+          />
         ))}
       </div>
 
@@ -49,7 +64,8 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
             setIsOpen,
             setQuery,
             data,
-            setFilteredData
+            setFilteredData,
+            setHighlightedIndex
           )
         }
         placeholder="Select..."
@@ -57,7 +73,7 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
 
       <span
         className="flex items-center justify-center text-black/60 hover:text-black cursor-pointer px-2 transition"
-        onClick={() => handlePopup(isOpen, setIsOpen)}
+        onClick={() => handlePopup(isOpen, setIsOpen, setHighlightedIndex)}
       >
         <ChevronDown
           className={`w-4 h-4 transition ${isOpen ? 'rotate-180' : ''}`}
@@ -72,6 +88,7 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
           handleSelect(char, selectedList, setSelectedList)
         }
         selectedList={selectedList}
+        highlightedIndex={highlightedIndex}
       />
     </div>
   );
