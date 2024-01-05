@@ -15,7 +15,6 @@ const Main = () => {
     fetchData();
   }, []);
 
-  console.log(data);
   return (
     <main className="pt-24 lg:pt-32 pb-16  h-screen flex justify-center items-start px-5">
       <MultiSelect data={data} />

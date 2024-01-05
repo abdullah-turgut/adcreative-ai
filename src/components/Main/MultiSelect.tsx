@@ -21,7 +21,6 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
   useKeyboardHandler(
-    isOpen,
     setIsOpen,
     selectedList,
     selectRef,
@@ -89,6 +88,7 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
         }
         selectedList={selectedList}
         highlightedIndex={highlightedIndex}
+        setHighlightedIndex={setHighlightedIndex}
       />
     </div>
   );
