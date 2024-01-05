@@ -1,16 +1,25 @@
 import { ChevronDown } from 'lucide-react';
-import PopupContent from './PopupContent';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Character } from '../../types/types';
+import PopupContent from './PopupContent';
 import SelectedOption from './SelectedOption';
+import {
+  handlePopup,
+  handleQuery,
+  handleSelect,
+} from '../../utils/multiSelectFunctions';
+import { useKeyboardHandler } from '../../utils/keyboardHandler';
 
 const MultiSelect = ({ data }: { data: Character[] }) => {
+  const selectRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<Character[] | []>([]);
   const [selectedList, setSelectedList] = useState<Character[] | []>([]);
+
+  useKeyboardHandler(setIsOpen, selectedList, selectRef);
 
   useEffect(() => {
     if (!query) {
@@ -18,41 +27,11 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
     }
   }, [query, data]);
 
-  function handlePopup() {
-    setIsOpen(!isOpen);
-  }
-
-  function handleQuery(e: React.ChangeEvent<HTMLInputElement>) {
-    setIsLoading(true);
-
-    const q = e.target.value.toLowerCase();
-
-    setIsOpen(true);
-    setQuery(q);
-    const x = data.filter((char: Character) =>
-      char.name.toLowerCase().includes(q)
-    );
-    setFilteredData(x);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }
-
-  function handleSelect(char: Character) {
-    if (selectedList.some((item: Character) => item.id === char.id)) {
-      setSelectedList(
-        selectedList.filter((item: Character) => item.id !== char.id)
-      );
-    } else {
-      setSelectedList([...selectedList, char]);
-    }
-  }
-  console.log(selectedList);
   return (
     <div
       tabIndex={0}
-      className="w-full max-w-xl border rounded-2xl min-h-10 relative flex"
+      className="w-full max-w-xl border rounded-2xl min-h-12 relative flex"
+      ref={selectRef}
     >
       <div className="flex gap-x-3 min-w-0 p-2 max-w-[200px] lg:max-w-[500px]">
         {selectedList.map((item: Character) => (
@@ -63,13 +42,22 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
       <input
         type="text"
         className="flex-1 px-2 outline-none min-w-32 rounded-xl"
-        onChange={handleQuery}
+        onChange={(e) =>
+          handleQuery(
+            e,
+            setIsLoading,
+            setIsOpen,
+            setQuery,
+            data,
+            setFilteredData
+          )
+        }
         placeholder="Select..."
       />
 
       <span
         className="flex items-center justify-center text-black/60 hover:text-black cursor-pointer px-2 transition"
-        onClick={handlePopup}
+        onClick={() => handlePopup(isOpen, setIsOpen)}
       >
         <ChevronDown
           className={`w-4 h-4 transition ${isOpen ? 'rotate-180' : ''}`}
@@ -80,7 +68,9 @@ const MultiSelect = ({ data }: { data: Character[] }) => {
         isOpen={isOpen}
         data={filteredData}
         isLoading={isLoading}
-        handleSelect={handleSelect}
+        handleSelect={(char: Character) =>
+          handleSelect(char, selectedList, setSelectedList)
+        }
         selectedList={selectedList}
       />
     </div>
